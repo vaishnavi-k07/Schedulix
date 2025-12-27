@@ -1,0 +1,252 @@
+{% extends 'base.html' %}
+
+{% block title %}Time Slots - Schedulix{% endblock %}
+
+{% block content %}
+<div class="timeslots p-6">
+    <!-- Page Header -->
+    <div class="timeslots__header flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900">Time Slots</h1>
+            <p class="text-gray-600 mt-1">Define time periods for scheduling classes and breaks</p>
+        </div>
+        <button 
+            id="addTimeslotBtn" 
+            class="btn btn--primary px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors flex items-center gap-2"
+            aria-label="Add new time slot">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+            </svg>
+            <span>Add Time Slot</span>
+        </button>
+    </div>
+    
+    <!-- Day Filter -->
+    <div class="timeslots__filters bg-white border rounded-lg shadow-sm p-4 mb-6">
+        <div class="flex flex-col sm:flex-row gap-4">
+            <div class="flex-1">
+                <label for="timeslotDayFilter" class="sr-only">Filter by day</label>
+                <select 
+                    id="timeslotDayFilter" 
+                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    aria-label="Filter time slots by day">
+                    <option value="">All Days</option>
+                    <option value="Monday">Monday</option>
+                    <option value="Tuesday">Tuesday</option>
+                    <option value="Wednesday">Wednesday</option>
+                    <option value="Thursday">Thursday</option>
+                    <option value="Friday">Friday</option>
+                    <option value="Saturday">Saturday</option>
+                </select>
+            </div>
+            <div class="flex items-center gap-2">
+                <input 
+                    type="checkbox" 
+                    id="showBreaksOnly" 
+                    class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500">
+                <label for="showBreaksOnly" class="text-sm text-gray-700">Show breaks only</label>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Time Slots Table -->
+    <div class="timeslots__table bg-white border rounded-lg shadow-sm overflow-hidden mb-6">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200" role="table" aria-label="Time slots table">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Day
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Start Time
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            End Time
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Type
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Break Type
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Actions
+                        </th>
+                    </tr>
+                </thead>
+                <tbody id="timeslotsTableBody" class="bg-white divide-y divide-gray-200">
+                    <!-- Empty State -->
+                    <tr id="timeslotsEmptyState" class="empty-state">
+                        <td colspan="6" class="px-6 py-12 text-center">
+                            <div class="text-gray-400 text-5xl mb-4" aria-hidden="true">⏱</div>
+                            <p class="text-gray-500 text-lg mb-2">No time slots found</p>
+                            <p class="text-gray-400 text-sm mb-4">Add your first time slot to get started</p>
+                            <button 
+                                onclick="document.getElementById('addTimeslotBtn').click()" 
+                                class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+                                Add Time Slot
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Visual Time Slot View by Day -->
+    <div class="timeslots__visual bg-white border rounded-lg shadow-sm p-6">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">Weekly Schedule View</h2>
+        <div id="timeslotsVisualContainer" class="space-y-4">
+            <!-- Visual representation will be loaded here -->
+            <div class="text-gray-500 text-center py-8">
+                <p>Add time slots to see the weekly schedule view</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add/Edit Time Slot Modal Template -->
+<template id="timeslotModalTemplate">
+    <div class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50" role="dialog" aria-modal="true" aria-labelledby="timeslotModalTitle">
+        <div class="modal__content bg-white rounded-lg shadow-xl max-w-md w-full">
+            <!-- Modal Header -->
+            <div class="modal__header flex justify-between items-center p-6 border-b">
+                <h2 id="timeslotModalTitle" class="text-xl font-semibold text-gray-900">Add Time Slot</h2>
+                <button 
+                    class="modal__close text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
+                    aria-label="Close modal">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- Modal Body -->
+            <form id="timeslotForm" class="modal__body p-6 space-y-4">
+                <!-- Day -->
+                <div class="form-group">
+                    <label for="timeslotDay" class="block text-sm font-medium text-gray-700 mb-1">
+                        Day <span class="text-red-500">*</span>
+                    </label>
+                    <select 
+                        id="timeslotDay" 
+                        name="day"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        required
+                        aria-required="true">
+                        <option value="">Select day</option>
+                        <option value="Monday">Monday</option>
+                        <option value="Tuesday">Tuesday</option>
+                        <option value="Wednesday">Wednesday</option>
+                        <option value="Thursday">Thursday</option>
+                        <option value="Friday">Friday</option>
+                        <option value="Saturday">Saturday</option>
+                    </select>
+                    <p class="form-error mt-1 text-sm text-red-600 hidden" role="alert"></p>
+                </div>
+                
+                <!-- Start Time -->
+                <div class="form-group">
+                    <label for="timeslotStartTime" class="block text-sm font-medium text-gray-700 mb-1">
+                        Start Time <span class="text-red-500">*</span>
+                    </label>
+                    <input 
+                        type="time" 
+                        id="timeslotStartTime" 
+                        name="start_time"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        required
+                        aria-required="true">
+                    <p class="form-error mt-1 text-sm text-red-600 hidden" role="alert"></p>
+                </div>
+                
+                <!-- End Time -->
+                <div class="form-group">
+                    <label for="timeslotEndTime" class="block text-sm font-medium text-gray-700 mb-1">
+                        End Time <span class="text-red-500">*</span>
+                    </label>
+                    <input 
+                        type="time" 
+                        id="timeslotEndTime" 
+                        name="end_time"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        required
+                        aria-required="true">
+                    <p class="form-error mt-1 text-sm text-red-600 hidden" role="alert"></p>
+                </div>
+                
+                <!-- Is Break Checkbox -->
+                <div class="form-group">
+                    <div class="flex items-center gap-2">
+                        <input 
+                            type="checkbox" 
+                            id="timeslotIsBreak" 
+                            name="is_break"
+                            class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500">
+                        <label for="timeslotIsBreak" class="text-sm font-medium text-gray-700">
+                            This is a break period
+                        </label>
+                    </div>
+                </div>
+                
+                <!-- Break Type (conditional) -->
+                <div id="breakTypeGroup" class="form-group" style="display: none;">
+                    <label for="timeslotBreakType" class="block text-sm font-medium text-gray-700 mb-1">
+                        Break Type
+                    </label>
+                    <select 
+                        id="timeslotBreakType" 
+                        name="break_type"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="">Select break type</option>
+                        <option value="short">Short Break</option>
+                        <option value="lunch">Lunch Break</option>
+                        <option value="long">Long Break</option>
+                    </select>
+                    <p class="form-error mt-1 text-sm text-red-600 hidden" role="alert"></p>
+                </div>
+            </form>
+            
+            <!-- Modal Footer -->
+            <div class="modal__footer flex justify-end gap-3 p-6 border-t bg-gray-50">
+                <button 
+                    type="button" 
+                    class="modal__cancel px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+                    Cancel
+                </button>
+                <button 
+                    type="submit" 
+                    form="timeslotForm"
+                    class="modal__submit px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+                    Save Time Slot
+                </button>
+            </div>
+        </div>
+    </div>
+</template>
+{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+<script>
+// Show/hide break type field based on is_break checkbox
+document.addEventListener('DOMContentLoaded', function() {
+    const observer = new MutationObserver(function(mutations) {
+        const isBreakCheckbox = document.getElementById('timeslotIsBreak');
+        const breakTypeGroup = document.getElementById('breakTypeGroup');
+        
+        if (isBreakCheckbox && breakTypeGroup) {
+            isBreakCheckbox.addEventListener('change', function() {
+                breakTypeGroup.style.display = this.checked ? 'block' : 'none';
+            });
+        }
+    });
+    
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+});
+</script>
+{% endblock %}

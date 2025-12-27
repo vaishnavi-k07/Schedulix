@@ -1,0 +1,179 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Schedulix{% endblock %}
+
+{% block content %}
+<div class="dashboard p-6">
+    <!-- Page Header -->
+    <div class="dashboard__header mb-6">
+        <h1 class="text-3xl font-bold text-gray-900">Dashboard</h1>
+        <p class="text-gray-600 mt-1">Overview of your timetable scheduling system</p>
+    </div>
+    
+    <!-- Statistics Cards -->
+    <div class="dashboard__stats grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <!-- Total Subjects Card -->
+        <div class="stat-card bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg shadow-md p-6 text-white">
+            <div class="stat-card__icon mb-4">
+                <div class="w-12 h-12 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+                    <span class="text-2xl" aria-hidden="true">📘</span>
+                </div>
+            </div>
+            <div class="stat-card__content">
+                <div class="text-3xl font-bold" id="totalSubjects" aria-label="Total subjects">0</div>
+                <div class="text-blue-100 text-sm mt-1">Total Subjects</div>
+            </div>
+        </div>
+        
+        <!-- Total Teachers Card -->
+        <div class="stat-card bg-gradient-to-br from-green-500 to-green-600 rounded-lg shadow-md p-6 text-white">
+            <div class="stat-card__icon mb-4">
+                <div class="w-12 h-12 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+                    <span class="text-2xl" aria-hidden="true">👩‍🏫</span>
+                </div>
+            </div>
+            <div class="stat-card__content">
+                <div class="text-3xl font-bold" id="totalTeachers" aria-label="Total teachers">0</div>
+                <div class="text-green-100 text-sm mt-1">Total Teachers</div>
+            </div>
+        </div>
+        
+        <!-- Total Classrooms Card -->
+        <div class="stat-card bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg shadow-md p-6 text-white">
+            <div class="stat-card__icon mb-4">
+                <div class="w-12 h-12 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+                    <span class="text-2xl" aria-hidden="true">🏫</span>
+                </div>
+            </div>
+            <div class="stat-card__content">
+                <div class="text-3xl font-bold" id="totalClassrooms" aria-label="Total classrooms">0</div>
+                <div class="text-purple-100 text-sm mt-1">Total Classrooms</div>
+            </div>
+        </div>
+        
+        <!-- Total Time Slots Card -->
+        <div class="stat-card bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg shadow-md p-6 text-white">
+            <div class="stat-card__icon mb-4">
+                <div class="w-12 h-12 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+                    <span class="text-2xl" aria-hidden="true">⏱</span>
+                </div>
+            </div>
+            <div class="stat-card__content">
+                <div class="text-3xl font-bold" id="totalTimeSlots" aria-label="Total time slots">0</div>
+                <div class="text-orange-100 text-sm mt-1">Total Time Slots</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Active Timetable Section -->
+    <div class="dashboard__active-timetable mb-8">
+        <div class="bg-white border rounded-lg shadow-sm p-6">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                <span class="text-2xl" aria-hidden="true">🗓</span>
+                <span>Active Timetable</span>
+            </h2>
+            
+            <div id="activeTimetableContainer">
+                <!-- Active timetable info will be loaded here -->
+                <div class="text-gray-500 text-center py-8">
+                    <div class="text-4xl mb-2" aria-hidden="true">📅</div>
+                    <p>No active timetable found</p>
+                    <button 
+                        onclick="window.location.hash = '#/timetable'" 
+                        class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+                        Generate Timetable
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recent Timetables Section -->
+    <div class="dashboard__recent-timetables">
+        <div class="bg-white border rounded-lg shadow-sm p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-semibold text-gray-900 flex items-center gap-2">
+                    <span class="text-2xl" aria-hidden="true">📋</span>
+                    <span>Recent Timetables</span>
+                </h2>
+                <a 
+                    href="#/timetables" 
+                    class="text-sm text-blue-600 hover:text-blue-800 focus:outline-none focus:underline">
+                    View All
+                </a>
+            </div>
+            
+            <div id="recentTimetablesContainer">
+                <!-- Recent timetables list will be loaded here -->
+                <div class="text-gray-500 text-center py-8">
+                    <p>No timetables generated yet</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quick Actions Section -->
+    <div class="dashboard__quick-actions mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Setup Guide Card -->
+        <div class="bg-gradient-to-br from-indigo-50 to-indigo-100 border border-indigo-200 rounded-lg p-6">
+            <h3 class="text-lg font-semibold text-indigo-900 mb-3 flex items-center gap-2">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                </svg>
+                <span>Setup Guide</span>
+            </h3>
+            <p class="text-indigo-700 text-sm mb-4">Follow these steps to get started with timetable generation:</p>
+            <ol class="space-y-2 text-sm text-indigo-800">
+                <li class="flex items-start gap-2">
+                    <span class="font-semibold">1.</span>
+                    <span>Add subjects with their details</span>
+                </li>
+                <li class="flex items-start gap-2">
+                    <span class="font-semibold">2.</span>
+                    <span>Register faculty members and their availability</span>
+                </li>
+                <li class="flex items-start gap-2">
+                    <span class="font-semibold">3.</span>
+                    <span>Configure classrooms and their capacities</span>
+                </li>
+                <li class="flex items-start gap-2">
+                    <span class="font-semibold">4.</span>
+                    <span>Set up time slots for each day</span>
+                </li>
+                <li class="flex items-start gap-2">
+                    <span class="font-semibold">5.</span>
+                    <span>Generate your timetable</span>
+                </li>
+            </ol>
+        </div>
+        
+        <!-- System Status Card -->
+        <div class="bg-gradient-to-br from-green-50 to-green-100 border border-green-200 rounded-lg p-6">
+            <h3 class="text-lg font-semibold text-green-900 mb-3 flex items-center gap-2">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <span>System Status</span>
+            </h3>
+            <div class="space-y-3">
+                <div class="flex items-center justify-between text-sm">
+                    <span class="text-green-700">Database Connection</span>
+                    <span class="px-2 py-1 bg-green-200 text-green-800 rounded-full text-xs font-medium">Active</span>
+                </div>
+                <div class="flex items-center justify-between text-sm">
+                    <span class="text-green-700">API Service</span>
+                    <span class="px-2 py-1 bg-green-200 text-green-800 rounded-full text-xs font-medium">Running</span>
+                </div>
+                <div class="flex items-center justify-between text-sm">
+                    <span class="text-green-700">Timetable Generator</span>
+                    <span class="px-2 py-1 bg-green-200 text-green-800 rounded-full text-xs font-medium">Ready</span>
+                </div>
+                <div class="flex items-center justify-between text-sm">
+                    <span class="text-green-700">Last Updated</span>
+                    <span class="text-green-700 font-medium" id="lastUpdated">Just now</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
