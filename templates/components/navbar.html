@@ -1,0 +1,57 @@
+<!-- Navigation Bar -->
+<header class="navbar bg-white border-b shadow-sm" role="banner">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between h-16 items-center">
+        <!-- Left Section: Logo and Brand -->
+        <div class="navbar__brand flex items-center gap-3">
+            <!-- Mobile Menu Toggle Button -->
+            <button 
+                id="mobileMenuBtn" 
+                class="lg:hidden p-2 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                aria-label="Toggle mobile menu"
+                aria-expanded="false"
+                aria-controls="sidebar">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+            
+            <!-- Logo Icon -->
+            <div class="navbar__logo w-10 h-10 bg-blue-600 text-white flex items-center justify-center rounded-md shadow" aria-hidden="true">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M3 7h18M3 12h18M3 17h18"/>
+                </svg>
+            </div>
+            
+            <!-- Brand Name and Tagline -->
+            <div class="navbar__title">
+                <div class="text-lg font-semibold text-gray-900">SCHEDULIX</div>
+                <div class="text-xs text-gray-500">Automatic Timetable Generator</div>
+            </div>
+        </div>
+        
+        <!-- Right Section: User Info and Actions -->
+        <div class="navbar__actions flex items-center gap-4">
+            <!-- Help Button -->
+            <button 
+                class="navbar__help-btn hidden sm:flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:text-blue-600 hover:bg-gray-100 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+                aria-label="Help and Support"
+                title="Help & Support">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <span class="hidden md:inline">Help</span>
+            </button>
+            
+            <!-- User Profile Section -->
+            <div class="navbar__user flex items-center gap-2">
+                <div class="hidden sm:block text-right">
+                    <div class="text-sm font-medium text-gray-700">Welcome, Coordinator</div>
+                    <div class="text-xs text-gray-500">Administrator</div>
+                </div>
+                <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 text-white flex items-center justify-center rounded-full font-semibold shadow" aria-label="User profile">
+                    C
+                </div>
+            </div>
+        </div>
+    </div>
+</header>

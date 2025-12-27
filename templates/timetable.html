@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+
+{% block title %}Generate Timetable - Schedulix{% endblock %}
+
+{% block content %}
+<div class="timetable-generate p-6">
+    <!-- Page Header -->
+    <div class="timetable-generate__header mb-6">
+        <h1 class="text-3xl font-bold text-gray-900">Generate Timetable</h1>
+        <p class="text-gray-600 mt-1">Create a new optimized timetable based on your configuration</p>
+    </div>
+    
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Main Form Section -->
+        <div class="lg:col-span-2 space-y-6">
+            <!-- Pre-generation Validation -->
+            <div class="bg-white border rounded-lg shadow-sm p-6">
+                <h2 class="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                    </svg>
+                    <span>Pre-Generation Checklist</span>
+                </h2>
+                
+                <div id="validationChecklist" class="space-y-3">
+                    <!-- Checklist items will be dynamically loaded -->
+                    <div class="validation-item flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                        <div class="validation-item__icon mt-0.5">
+                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-medium text-gray-700">Checking requirements...</div>
+                            <div class="text-sm text-gray-500">Please wait while we validate your data</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Generation Form -->
+            <div class="bg-white border rounded-lg shadow-sm p-6">
+                <h2 class="text-xl font-semibold text-gray-900 mb-4">Timetable Information</h2>
+                
+                <form id="generateTimetableForm" class="space-y-4">
+                    <!-- Timetable Name -->
+                    <div class="form-group">
+                        <label for="timetableName" class="block text-sm font-medium text-gray-700 mb-1">
+                            Timetable Name <span class="text-red-500">*</span>
+                        </label>
+                        <input 
+                            type="text" 
+                            id="timetableName" 
+                            name="name"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            placeholder="e.g., Fall 2024 Semester"
+                            required
+                            aria-required="true">
+                        <p class="text-xs text-gray-500 mt-1">Give this timetable a descriptive name for easy identification</p>
+                        <p class="form-error mt-1 text-sm text-red-600 hidden" role="alert"></p>
+                    </div>
+                    
+                    <!-- Generate Button -->
+                    <div class="flex gap-3">
+                        <button 
+                            type="submit" 
+                            id="generateBtn"
+                            class="flex-1 px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors flex items-center justify-center gap-2 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                            aria-label="Generate timetable">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                            </svg>
+                            <span>Generate Timetable</span>
+                        </button>
+                    </div>
+                </form>
+                
+                <!-- Generation Progress -->
+                <div id="generationProgress" class="mt-6 hidden">
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <div class="flex items-center gap-3 mb-2">
+                            <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
+                            <span class="font-medium text-blue-900">Generating timetable...</span>
+                        </div>
+                        <div class="w-full bg-blue-200 rounded-full h-2">
+                            <div id="progressBar" class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                        </div>
+                        <p class="text-sm text-blue-700 mt-2" id="progressMessage">Initializing...</p>
+                    </div>
+                </div>
+                
+                <!-- Generation Result -->
+                <div id="generationResult" class="mt-6 hidden"></div>
+            </div>
+        </div>
+        
+        <!-- Instructions Sidebar -->
+        <div class="lg:col-span-1">
+            <div class="bg-gradient-to-br from-indigo-50 to-indigo-100 border border-indigo-200 rounded-lg p-6 sticky top-6">
+                <h3 class="text-lg font-semibold text-indigo-900 mb-3 flex items-center gap-2">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span>Setup Instructions</span>
+                </h3>
+                
+                <div class="space-y-4 text-sm text-indigo-800">
+                    <div>
+                        <h4 class="font-semibold mb-2">Before generating a timetable, ensure:</h4>
+                        <ol class="space-y-2 ml-4 list-decimal">
+                            <li>At least one subject is added</li>
+                            <li>At least one teacher is registered with subject assignments</li>
+                            <li>At least one classroom is configured</li>
+                            <li>Time slots are defined for each working day</li>
+                        </ol>
+                    </div>
+                    
+                    <div class="pt-3 border-t border-indigo-300">
+                        <h4 class="font-semibold mb-2">Generation Algorithm:</h4>
+                        <p class="text-indigo-700">The system automatically considers:</p>
+                        <ul class="space-y-1 ml-4 list-disc mt-2 text-indigo-700">
+                            <li>Teacher availability windows</li>
+                            <li>Classroom suitability and capacity</li>
+                            <li>Subject type requirements</li>
+                            <li>Break periods</li>
+                            <li>Conflict-free scheduling</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="pt-3 border-t border-indigo-300">
+                        <h4 class="font-semibold mb-2">Tips:</h4>
+                        <ul class="space-y-1 ml-4 list-disc text-indigo-700">
+                            <li>Generation may take 30-60 seconds</li>
+                            <li>Ensure sufficient time slots for all lectures</li>
+                            <li>Review teacher workload limits</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="mt-6 pt-4 border-t border-indigo-300">
+                    <h4 class="font-semibold text-indigo-900 mb-2">Quick Links</h4>
+                    <div class="space-y-2">
+                        <a href="#/subjects" class="block text-indigo-700 hover:text-indigo-900 hover:underline">
+                            → Manage Subjects
+                        </a>
+                        <a href="#/teachers" class="block text-indigo-700 hover:text-indigo-900 hover:underline">
+                            → Manage Teachers
+                        </a>
+                        <a href="#/classrooms" class="block text-indigo-700 hover:text-indigo-900 hover:underline">
+                            → Manage Classrooms
+                        </a>
+                        <a href="#/timeslots" class="block text-indigo-700 hover:text-indigo-900 hover:underline">
+                            → Manage Time Slots
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,98 @@
+<!-- Sidebar Navigation -->
+<aside 
+    id="sidebar" 
+    class="sidebar hidden lg:block w-64 bg-white border rounded-lg shadow-sm p-3 fixed lg:relative z-30 lg:z-0 top-20 lg:top-0 left-4 right-4 lg:left-0 lg:right-0"
+    role="navigation"
+    aria-label="Main navigation">
+    
+    <!-- Main Navigation Links -->
+    <nav class="sidebar__nav space-y-1">
+        <a 
+            href="#/dashboard" 
+            class="nav-link nav-link--dashboard flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+            data-page="dashboard"
+            aria-label="Dashboard">
+            <span class="nav-link__icon text-xl" aria-hidden="true">📊</span>
+            <span class="nav-link__text">Dashboard</span>
+        </a>
+        
+        <a 
+            href="#/subjects" 
+            class="nav-link nav-link--subjects flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+            data-page="subjects"
+            aria-label="Subjects">
+            <span class="nav-link__icon text-xl" aria-hidden="true">📘</span>
+            <span class="nav-link__text">Subjects</span>
+        </a>
+        
+        <a 
+            href="#/teachers" 
+            class="nav-link nav-link--teachers flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+            data-page="teachers"
+            aria-label="Faculty">
+            <span class="nav-link__icon text-xl" aria-hidden="true">👩‍🏫</span>
+            <span class="nav-link__text">Faculty</span>
+        </a>
+        
+        <a 
+            href="#/classrooms" 
+            class="nav-link nav-link--classrooms flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+            data-page="classrooms"
+            aria-label="Classrooms">
+            <span class="nav-link__icon text-xl" aria-hidden="true">🏫</span>
+            <span class="nav-link__text">Classrooms</span>
+        </a>
+        
+        <a 
+            href="#/timeslots" 
+            class="nav-link nav-link--timeslots flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+            data-page="timeslots"
+            aria-label="Time Slots">
+            <span class="nav-link__icon text-xl" aria-hidden="true">⏱</span>
+            <span class="nav-link__text">Time Slots</span>
+        </a>
+        
+        <a 
+            href="#/timetable" 
+            class="nav-link nav-link--timetable flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+            data-page="timetable"
+            aria-label="Generate Timetable">
+            <span class="nav-link__icon text-xl" aria-hidden="true">🗓</span>
+            <span class="nav-link__text">Generate Timetable</span>
+        </a>
+        
+        <a 
+            href="#/timetables" 
+            class="nav-link nav-link--timetables flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+            data-page="timetables"
+            aria-label="Timetable List">
+            <span class="nav-link__icon text-xl" aria-hidden="true">📋</span>
+            <span class="nav-link__text">Timetable List</span>
+        </a>
+    </nav>
+    
+    <!-- Quick Actions Section -->
+    <div class="sidebar__quick-actions mt-6 border-t pt-4">
+        <div class="text-xs text-gray-500 px-2 mb-2 uppercase tracking-wide font-semibold">Quick Actions</div>
+        
+        <button 
+            id="generateTimetableBtn" 
+            class="btn btn--primary w-full bg-blue-600 text-white py-2 px-4 rounded-md text-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors mb-2 flex items-center justify-center gap-2"
+            aria-label="Generate new timetable">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+            </svg>
+            <span>Generate Timetable</span>
+        </button>
+        
+        <button 
+            id="clearDataBtn" 
+            class="btn btn--danger w-full bg-red-600 text-white py-2 px-4 rounded-md text-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors flex items-center justify-center gap-2"
+            aria-label="Clear all data">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+            </svg>
+            <span>Clear All Data</span>
+        </button>
+    </div>
+</aside>

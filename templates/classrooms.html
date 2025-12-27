@@ -1,0 +1,261 @@
+{% extends 'base.html' %}
+
+{% block title %}Classrooms - Schedulix{% endblock %}
+
+{% block content %}
+<div class="classrooms p-6">
+    <!-- Page Header -->
+    <div class="classrooms__header flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900">Classrooms</h1>
+            <p class="text-gray-600 mt-1">Manage classroom facilities and their capacities</p>
+        </div>
+        <button 
+            id="addClassroomBtn" 
+            class="btn btn--primary px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors flex items-center gap-2"
+            aria-label="Add new classroom">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+            </svg>
+            <span>Add Classroom</span>
+        </button>
+    </div>
+    
+    <!-- Search and Filter Section -->
+    <div class="classrooms__filters bg-white border rounded-lg shadow-sm p-4 mb-6">
+        <div class="flex flex-col sm:flex-row gap-4">
+            <!-- Search Input -->
+            <div class="flex-1">
+                <label for="classroomSearch" class="sr-only">Search classrooms</label>
+                <div class="relative">
+                    <input 
+                        type="text" 
+                        id="classroomSearch" 
+                        class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Search by room number..."
+                        aria-label="Search classrooms by room number">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Wing Filter -->
+            <div class="sm:w-32">
+                <label for="classroomWingFilter" class="sr-only">Filter by wing</label>
+                <select 
+                    id="classroomWingFilter" 
+                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    aria-label="Filter classrooms by wing">
+                    <option value="">All Wings</option>
+                    <option value="A">Wing A</option>
+                    <option value="B">Wing B</option>
+                    <option value="C">Wing C</option>
+                    <option value="D">Wing D</option>
+                </select>
+            </div>
+            
+            <!-- Type Filter -->
+            <div class="sm:w-48">
+                <label for="classroomTypeFilter" class="sr-only">Filter by type</label>
+                <select 
+                    id="classroomTypeFilter" 
+                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    aria-label="Filter classrooms by type">
+                    <option value="">All Types</option>
+                    <option value="theory">Theory</option>
+                    <option value="practical">Practical</option>
+                    <option value="both">Both</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Classrooms Table -->
+    <div class="classrooms__table bg-white border rounded-lg shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200" role="table" aria-label="Classrooms table">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Room Number
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Wing
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Capacity
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Type
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Actions
+                        </th>
+                    </tr>
+                </thead>
+                <tbody id="classroomsTableBody" class="bg-white divide-y divide-gray-200">
+                    <!-- Empty State -->
+                    <tr id="classroomsEmptyState" class="empty-state">
+                        <td colspan="5" class="px-6 py-12 text-center">
+                            <div class="text-gray-400 text-5xl mb-4" aria-hidden="true">🏫</div>
+                            <p class="text-gray-500 text-lg mb-2">No classrooms found</p>
+                            <p class="text-gray-400 text-sm mb-4">Add your first classroom to get started</p>
+                            <button 
+                                onclick="document.getElementById('addClassroomBtn').click()" 
+                                class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+                                Add Classroom
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Add/Edit Classroom Modal Template -->
+<template id="classroomModalTemplate">
+    <div class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50" role="dialog" aria-modal="true" aria-labelledby="classroomModalTitle">
+        <div class="modal__content bg-white rounded-lg shadow-xl max-w-md w-full">
+            <!-- Modal Header -->
+            <div class="modal__header flex justify-between items-center p-6 border-b">
+                <h2 id="classroomModalTitle" class="text-xl font-semibold text-gray-900">Add Classroom</h2>
+                <button 
+                    class="modal__close text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
+                    aria-label="Close modal">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- Modal Body -->
+            <form id="classroomForm" class="modal__body p-6 space-y-4">
+                <!-- Room Number -->
+                <div class="form-group">
+                    <label for="classroomNumber" class="block text-sm font-medium text-gray-700 mb-1">
+                        Room Number <span class="text-red-500">*</span>
+                    </label>
+                    <input 
+                        type="text" 
+                        id="classroomNumber" 
+                        name="number"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="e.g., 101"
+                        required
+                        aria-required="true">
+                    <p class="form-error mt-1 text-sm text-red-600 hidden" role="alert"></p>
+                </div>
+                
+                <!-- Wing -->
+                <div class="form-group">
+                    <label for="classroomWing" class="block text-sm font-medium text-gray-700 mb-1">
+                        Wing <span class="text-red-500">*</span>
+                    </label>
+                    <select 
+                        id="classroomWing" 
+                        name="wing"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        required
+                        aria-required="true">
+                        <option value="">Select wing</option>
+                        <option value="A">Wing A</option>
+                        <option value="B">Wing B</option>
+                        <option value="C">Wing C</option>
+                        <option value="D">Wing D</option>
+                    </select>
+                    <p class="form-error mt-1 text-sm text-red-600 hidden" role="alert"></p>
+                </div>
+                
+                <!-- Capacity -->
+                <div class="form-group">
+                    <label for="classroomCapacity" class="block text-sm font-medium text-gray-700 mb-1">
+                        Capacity <span class="text-red-500">*</span>
+                    </label>
+                    <input 
+                        type="number" 
+                        id="classroomCapacity" 
+                        name="capacity"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="e.g., 50"
+                        min="1"
+                        max="500"
+                        required
+                        aria-required="true">
+                    <p class="form-error mt-1 text-sm text-red-600 hidden" role="alert"></p>
+                </div>
+                
+                <!-- Type -->
+                <div class="form-group">
+                    <label for="classroomType" class="block text-sm font-medium text-gray-700 mb-1">
+                        Type <span class="text-red-500">*</span>
+                    </label>
+                    <select 
+                        id="classroomType" 
+                        name="type"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        required
+                        aria-required="true">
+                        <option value="">Select type</option>
+                        <option value="theory">Theory</option>
+                        <option value="practical">Practical</option>
+                        <option value="both">Both</option>
+                    </select>
+                    <p class="form-error mt-1 text-sm text-red-600 hidden" role="alert"></p>
+                </div>
+            </form>
+            
+            <!-- Modal Footer -->
+            <div class="modal__footer flex justify-end gap-3 p-6 border-t bg-gray-50">
+                <button 
+                    type="button" 
+                    class="modal__cancel px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+                    Cancel
+                </button>
+                <button 
+                    type="submit" 
+                    form="classroomForm"
+                    class="modal__submit px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+                    Save Classroom
+                </button>
+            </div>
+        </div>
+    </div>
+</template>
+
+<!-- Classroom Detail Modal Template -->
+<template id="classroomDetailModalTemplate">
+    <div class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50" role="dialog" aria-modal="true" aria-labelledby="classroomDetailModalTitle">
+        <div class="modal__content bg-white rounded-lg shadow-xl max-w-lg w-full">
+            <!-- Modal Header -->
+            <div class="modal__header flex justify-between items-center p-6 border-b">
+                <h2 id="classroomDetailModalTitle" class="text-xl font-semibold text-gray-900">Classroom Details</h2>
+                <button 
+                    class="modal__close text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
+                    aria-label="Close modal">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- Modal Body -->
+            <div class="modal__body p-6 space-y-4" id="classroomDetailContent">
+                <!-- Content will be populated dynamically -->
+            </div>
+            
+            <!-- Modal Footer -->
+            <div class="modal__footer flex justify-end gap-3 p-6 border-t bg-gray-50">
+                <button 
+                    type="button" 
+                    class="modal__close px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+</template>
+{% endblock %}

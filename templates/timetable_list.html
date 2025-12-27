@@ -1,0 +1,184 @@
+{% extends 'base.html' %}
+
+{% block title %}Timetable List - Schedulix{% endblock %}
+
+{% block content %}
+<div class="timetable-list p-6">
+    <!-- Page Header -->
+    <div class="timetable-list__header flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900">Timetable List</h1>
+            <p class="text-gray-600 mt-1">View and manage all generated timetables</p>
+        </div>
+        <button 
+            onclick="window.location.hash = '#/timetable'" 
+            class="btn btn--primary px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors flex items-center gap-2"
+            aria-label="Generate new timetable">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+            </svg>
+            <span>Generate New</span>
+        </button>
+    </div>
+    
+    <!-- Filter Section -->
+    <div class="timetable-list__filters bg-white border rounded-lg shadow-sm p-4 mb-6">
+        <div class="flex flex-col sm:flex-row gap-4">
+            <!-- Search Input -->
+            <div class="flex-1">
+                <label for="timetableSearch" class="sr-only">Search timetables</label>
+                <div class="relative">
+                    <input 
+                        type="text" 
+                        id="timetableSearch" 
+                        class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Search by name..."
+                        aria-label="Search timetables by name">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Status Filter -->
+            <div class="sm:w-48">
+                <label for="timetableStatusFilter" class="sr-only">Filter by status</label>
+                <select 
+                    id="timetableStatusFilter" 
+                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    aria-label="Filter timetables by status">
+                    <option value="">All Status</option>
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Timetables Grid -->
+    <div id="timetablesContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Loading State -->
+        <div class="col-span-full flex items-center justify-center py-12">
+            <div class="flex items-center gap-3 text-gray-500">
+                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                <span>Loading timetables...</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Empty State (hidden by default) -->
+    <div id="timetablesEmptyState" class="hidden bg-white border rounded-lg shadow-sm p-12 text-center">
+        <div class="text-gray-400 text-5xl mb-4" aria-hidden="true">📅</div>
+        <p class="text-gray-500 text-lg mb-2">No timetables found</p>
+        <p class="text-gray-400 text-sm mb-6">Generate your first timetable to get started</p>
+        <button 
+            onclick="window.location.hash = '#/timetable'" 
+            class="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+            Generate Timetable
+        </button>
+    </div>
+</div>
+
+<!-- Timetable Card Template -->
+<template id="timetableCardTemplate">
+    <div class="timetable-card bg-white border rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+        <!-- Card Header -->
+        <div class="timetable-card__header bg-gradient-to-r from-blue-500 to-blue-600 text-white p-4">
+            <div class="flex items-start justify-between">
+                <div class="flex-1">
+                    <h3 class="text-lg font-semibold timetable-card__name">Timetable Name</h3>
+                    <p class="text-blue-100 text-sm mt-1 timetable-card__date">Created on Jan 1, 2024</p>
+                </div>
+                <span class="timetable-card__status px-3 py-1 bg-white bg-opacity-20 rounded-full text-xs font-medium">
+                    Active
+                </span>
+            </div>
+        </div>
+        
+        <!-- Card Body -->
+        <div class="timetable-card__body p-4">
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                    <div class="text-xs text-gray-500 mb-1">Total Entries</div>
+                    <div class="text-2xl font-bold text-gray-900 timetable-card__entries">0</div>
+                </div>
+                <div>
+                    <div class="text-xs text-gray-500 mb-1">Coverage</div>
+                    <div class="text-2xl font-bold text-gray-900 timetable-card__coverage">0%</div>
+                </div>
+            </div>
+            
+            <!-- Progress Bar -->
+            <div class="w-full bg-gray-200 rounded-full h-2 mb-4">
+                <div class="timetable-card__progress bg-blue-600 h-2 rounded-full" style="width: 0%"></div>
+            </div>
+        </div>
+        
+        <!-- Card Actions -->
+        <div class="timetable-card__actions border-t bg-gray-50 p-4 flex gap-2">
+            <button 
+                class="timetable-card__view flex-1 px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors text-sm font-medium flex items-center justify-center gap-2"
+                aria-label="View timetable">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                </svg>
+                <span>View</span>
+            </button>
+            <button 
+                class="timetable-card__activate px-3 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors text-sm font-medium"
+                aria-label="Activate timetable">
+                Activate
+            </button>
+            <button 
+                class="timetable-card__delete px-3 py-2 border border-red-300 text-red-600 rounded-md hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors text-sm"
+                aria-label="Delete timetable">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+</template>
+
+<!-- Delete Confirmation Modal Template -->
+<template id="deleteConfirmModalTemplate">
+    <div class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50" role="dialog" aria-modal="true" aria-labelledby="deleteConfirmModalTitle">
+        <div class="modal__content bg-white rounded-lg shadow-xl max-w-md w-full">
+            <!-- Modal Header -->
+            <div class="modal__header flex items-start gap-3 p-6 border-b">
+                <div class="flex-shrink-0 w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                    <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h2 id="deleteConfirmModalTitle" class="text-xl font-semibold text-gray-900">Delete Timetable</h2>
+                    <p class="text-sm text-gray-600 mt-1">This action cannot be undone</p>
+                </div>
+            </div>
+            
+            <!-- Modal Body -->
+            <div class="modal__body p-6">
+                <p class="text-gray-700">Are you sure you want to delete "<span id="deleteTimetableName" class="font-semibold"></span>"? All associated data will be permanently removed.</p>
+            </div>
+            
+            <!-- Modal Footer -->
+            <div class="modal__footer flex justify-end gap-3 p-6 border-t bg-gray-50">
+                <button 
+                    type="button" 
+                    class="modal__cancel px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+                    Cancel
+                </button>
+                <button 
+                    type="button" 
+                    class="modal__confirm px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors">
+                    Delete Timetable
+                </button>
+            </div>
+        </div>
+    </div>
+</template>
+{% endblock %}
