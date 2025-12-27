@@ -13,6 +13,11 @@
     <header class="bg-white border-b shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between h-16 items-center">
             <div class="flex items-center gap-3">
+                <button id="mobileMenuBtn" class="lg:hidden p-2 rounded-md hover:bg-gray-100">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
                 <div class="w-10 h-10 bg-blue-600 text-white flex items-center justify-center rounded-md shadow">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M3 7h18M3 12h18M3 17h18"/>
@@ -32,7 +37,7 @@
     <!-- Main Layout -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 flex gap-6">
         <!-- Sidebar -->
-        <aside class="w-64 bg-white border rounded-lg shadow-sm p-3">
+        <aside id="sidebar" class="hidden lg:block w-64 bg-white border rounded-lg shadow-sm p-3 fixed lg:relative z-30 lg:z-0 top-20 lg:top-0 left-4 right-4 lg:left-0 lg:right-0">
             <nav class="space-y-1">
                 <a href="#/dashboard" class="nav-link flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100">
                     <span>📊</span>
@@ -83,6 +88,6 @@
     <div id="modalRoot"></div>
 
     <!-- App JS -->
-    <script src="{% static 'script.js' %}"></script>
+    <script type="module" src="{% static 'script.js' %}"></script>
 </body>
 </html>

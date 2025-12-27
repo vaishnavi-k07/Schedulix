@@ -42,10 +42,10 @@ class TimeSlotSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class TimetableEntrySerializer(serializers.ModelSerializer):
-    subject_name = serializers.CharField(source='subject.name', read_only=True)
-    teacher_name = serializers.CharField(source='teacher.name', read_only=True)
-    classroom_number = serializers.CharField(source='classroom.number', read_only=True)
-    time_display = serializers.CharField(source='time_slot.__str__', read_only=True)
+    subject = SubjectSerializer(read_only=True)
+    teacher = TeacherSerializer(read_only=True)
+    classroom = ClassroomSerializer(read_only=True)
+    time_slot = TimeSlotSerializer(read_only=True)
 
     class Meta:
         model = TimetableEntry

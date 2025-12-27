@@ -220,6 +220,36 @@ class TimetableViewSet(viewsets.ModelViewSet):
             return Response(serializer.data)
         return Response({'detail': 'No active timetable found.'}, status=status.HTTP_404_NOT_FOUND)
     
+    @action(detail=True, methods=['get'])
+    def export_csv(self, request, pk=None):
+        """Export timetable as CSV"""
+        timetable = self.get_object()
+        entries = timetable.entries.all().select_related(
+            'subject', 'teacher', 'classroom', 'time_slot'
+        ).order_by('time_slot__day', 'time_slot__start_time')
+        
+        import csv
+        from django.http import HttpResponse
+        
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = f'attachment; filename="{timetable.name}.csv"'
+        
+        writer = csv.writer(response)
+        writer.writerow(['Day', 'Start Time', 'End Time', 'Subject', 'Teacher', 'Classroom', 'Type'])
+        
+        for entry in entries:
+            writer.writerow([
+                entry.time_slot.day,
+                entry.time_slot.start_time,
+                entry.time_slot.end_time,
+                entry.subject.name,
+                entry.teacher.name,
+                entry.classroom.number,
+                'Break' if entry.time_slot.is_break else 'Class'
+            ])
+            
+        return response
+
     @action(detail=True, methods=['post'])
     def activate(self, request, pk=None):
         """Activate a specific timetable"""

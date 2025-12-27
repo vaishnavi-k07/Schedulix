@@ -12,4 +12,6 @@ router.register(r'timetable-entries', views.TimetableEntryViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('stats/', views.DatabaseStatusView.as_view(), name='api-stats'),
+    path('clear-all-data/', views.clear_all_data, name='api-clear-all'),
 ]
