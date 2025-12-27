@@ -5,50 +5,56 @@ from .models import Subject, Teacher, Classroom, TimeSlot, Timetable
 class SubjectForm(forms.ModelForm):
     class Meta:
         model = Subject
-        fields = ['code', 'name', 'credit_hours']
+        fields = ['code', 'name', 'type', 'credits']
         widgets = {
             'code': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g., MATH101'}),
             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g., Mathematics'}),
-            'credit_hours': forms.NumberInput(attrs={'class': 'form-control', 'min': 1, 'max': 10}),
+            'type': forms.Select(attrs={'class': 'form-control'}),
+            'credits': forms.NumberInput(attrs={'class': 'form-control', 'min': 1, 'max': 10}),
         }
         labels = {
             'code': 'Subject Code',
             'name': 'Subject Name',
-            'credit_hours': 'Credit Hours',
+            'type': 'Type',
+            'credits': 'Credits',
         }
 
 class TeacherForm(forms.ModelForm):
     class Meta:
         model = Teacher
-        fields = ['teacher_id', 'name', 'email', 'phone']
+        fields = ['name', 'email', 'start_time', 'end_time', 'lectures_per_day', 'max_continuous_lectures']
         widgets = {
-            'teacher_id': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g., T001'}),
             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g., Dr. John Smith'}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'e.g., john@example.com'}),
-            'phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g., +1234567890'}),
+            'start_time': forms.TimeInput(attrs={'class': 'form-control', 'type': 'time'}),
+            'end_time': forms.TimeInput(attrs={'class': 'form-control', 'type': 'time'}),
+            'lectures_per_day': forms.NumberInput(attrs={'class': 'form-control', 'min': 1, 'max': 8}),
+            'max_continuous_lectures': forms.NumberInput(attrs={'class': 'form-control', 'min': 1, 'max': 4}),
         }
         labels = {
-            'teacher_id': 'Teacher ID',
             'name': 'Full Name',
             'email': 'Email Address',
-            'phone': 'Phone Number',
+            'start_time': 'Start Time',
+            'end_time': 'End Time',
+            'lectures_per_day': 'Lectures Per Day',
+            'max_continuous_lectures': 'Max Continuous Lectures',
         }
 
 class ClassroomForm(forms.ModelForm):
     class Meta:
         model = Classroom
-        fields = ['number', 'capacity', 'type', 'facilities']
+        fields = ['number', 'wing', 'capacity', 'type']
         widgets = {
             'number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g., Room 101'}),
+            'wing': forms.Select(attrs={'class': 'form-control'}),
             'capacity': forms.NumberInput(attrs={'class': 'form-control', 'min': 1, 'max': 500}),
             'type': forms.Select(attrs={'class': 'form-control'}),
-            'facilities': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'e.g., Projector, Whiteboard, AC'}),
         }
         labels = {
             'number': 'Room Number',
+            'wing': 'Wing',
             'capacity': 'Seating Capacity',
             'type': 'Room Type',
-            'facilities': 'Available Facilities',
         }
 
 class TimeSlotForm(forms.ModelForm):
@@ -69,12 +75,12 @@ class TimeSlotForm(forms.ModelForm):
 class TimetableForm(forms.ModelForm):
     class Meta:
         model = Timetable
-        fields = ['name', 'description']
+        fields = ['name', 'is_active']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g., Fall 2024 Timetable'}),
-            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Optional description'}),
+            'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
         labels = {
             'name': 'Timetable Name',
-            'description': 'Description',
+            'is_active': 'Is Active',
         }

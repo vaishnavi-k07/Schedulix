@@ -142,6 +142,7 @@ th {
     border-radius: 0.5rem;
     z-index: 50;
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    animation: slideIn 0.3s ease-out;
 }
 
 .notification.success {
@@ -157,4 +158,94 @@ th {
 .notification.info {
     background-color: #3b82f6;
     color: white;
+}
+
+.notification.warning {
+    background-color: #f59e0b;
+    color: white;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Modal animations */
+.modal-overlay {
+    animation: fadeIn 0.2s ease-out;
+}
+
+/* Loading spinner */
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
+
+/* Print styles */
+@media print {
+    header, aside, button, .no-print {
+        display: none !important;
+    }
+    
+    main {
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    
+    table {
+        page-break-inside: avoid;
+    }
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    #sidebar {
+        position: fixed !important;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 80%;
+        max-width: 280px;
+        z-index: 40;
+        background: white;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+        transition: transform 0.3s ease-out;
+    }
+    
+    #sidebar.hidden {
+        transform: translateX(-100%);
+    }
+    
+    #sidebar:not(.hidden) {
+        transform: translateX(0);
+    }
+    
+    .modal-box {
+        max-width: 95%;
+    }
+    
+    main {
+        width: 100% !important;
+    }
 }
