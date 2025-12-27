@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schedulix - Automatic Timetable Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans">
+    <!-- Navbar -->
+    <header class="bg-white border-b shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between h-16 items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-blue-600 text-white flex items-center justify-center rounded-md shadow">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M3 7h18M3 12h18M3 17h18"/>
+                    </svg>
+                </div>
+                <div>
+                    <div class="text-lg font-semibold">SCHEDULIX</div>
+                    <div class="text-xs text-gray-500">Automatic Timetable Generator</div>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="text-sm text-gray-600">Welcome, Coordinator</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Layout -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 flex gap-6">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-white border rounded-lg shadow-sm p-3">
+            <nav class="space-y-1">
+                <a href="#/dashboard" class="nav-link flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100">
+                    <span>📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#/subjects" class="nav-link flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100">
+                    <span>📘</span>
+                    <span>Subjects</span>
+                </a>
+                <a href="#/teachers" class="nav-link flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100">
+                    <span>👩‍🏫</span>
+                    <span>Faculty</span>
+                </a>
+                <a href="#/classrooms" class="nav-link flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100">
+                    <span>🏫</span>
+                    <span>Classrooms</span>
+                </a>
+                <a href="#/timeslots" class="nav-link flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100">
+                    <span>⏱</span>
+                    <span>Time Slots</span>
+                </a>
+                <a href="#/timetable" class="nav-link flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100">
+                    <span>🗓</span>
+                    <span>Generate Timetable</span>
+                </a>
+            </nav>
+
+            <div class="mt-6 border-t pt-4">
+                <div class="text-xs text-gray-500 px-2 mb-2">Quick Actions</div>
+                <button id="generateTimetableBtn" class="w-full bg-blue-600 text-white py-2 rounded text-sm hover:bg-blue-700 mb-2">
+                    Generate Timetable
+                </button>
+                <button id="clearDataBtn" class="w-full bg-red-600 text-white py-2 rounded text-sm hover:bg-red-700">
+                    Clear All Data
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main id="mainContent" class="flex-1 min-h-[70vh] bg-white p-6 rounded-lg shadow-sm">
+            <div class="text-center text-gray-500 py-10">
+                Loading...
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal Container -->
+    <div id="modalRoot"></div>
+
+    <!-- App JS -->
+    <script src="{% static 'script.js' %}"></script>
+</body>
+</html>
