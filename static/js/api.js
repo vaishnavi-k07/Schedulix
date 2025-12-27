@@ -105,6 +105,13 @@ export const api = {
     // Bulk Actions
     bulk: {
         clearAll: () => request('/clear-all-data/', { method: 'DELETE' }),
-        getStats: () => request('/stats/')
+        getStats: () => request('/stats/'),
+        validate: () => request('/validate/'),
+        getAllData: () => request('/get-all-data/')
+    },
+    // Data Import/Export
+    data: {
+        exportJson: () => request('/export-json/'),
+        importJson: (data) => request('/import-json/', { method: 'POST', body: JSON.stringify(data) })
     }
 };
