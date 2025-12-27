@@ -14,4 +14,8 @@ urlpatterns = [
     path('', include(router.urls)),
     path('stats/', views.DatabaseStatusView.as_view(), name='api-stats'),
     path('clear-all-data/', views.clear_all_data, name='api-clear-all'),
+    path('validate/', views.validate_data_for_generation, name='api-validate'),
+    path('get-all-data/', views.get_all_data, name='api-get-all'),
+    path('export-json/', views.export_data_json, name='api-export-json'),
+    path('import-json/', views.import_data_json, name='api-import-json'),
 ]

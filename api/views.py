@@ -281,17 +281,26 @@ class TimetableEntryViewSet(viewsets.ModelViewSet):
         """Save timetable entry to database"""
         serializer.save()
         entry = serializer.instance
-        print(f"TimetableEntry saved: {entry.subject.name} with {entry.teacher.name} in {entry.classroom.number} at {entry.time_slot}")
+        if entry.is_break:
+            print(f"TimetableEntry saved: BREAK at {entry.time_slot}")
+        else:
+            print(f"TimetableEntry saved: {entry.subject.name} with {entry.teacher.name} in {entry.classroom.number} at {entry.time_slot}")
 
     def perform_update(self, serializer):
         """Update timetable entry in database"""
         serializer.save()
         entry = serializer.instance
-        print(f"TimetableEntry updated: {entry.subject.name} with {entry.teacher.name} in {entry.classroom.number} at {entry.time_slot}")
+        if entry.is_break:
+            print(f"TimetableEntry updated: BREAK at {entry.time_slot}")
+        else:
+            print(f"TimetableEntry updated: {entry.subject.name} with {entry.teacher.name} in {entry.classroom.number} at {entry.time_slot}")
 
     def perform_destroy(self, instance):
         """Delete timetable entry from database"""
-        print(f"TimetableEntry deleted: {instance.subject.name} with {instance.teacher.name} in {instance.classroom.number} at {instance.time_slot}")
+        if instance.is_break:
+            print(f"TimetableEntry deleted: BREAK at {instance.time_slot}")
+        else:
+            print(f"TimetableEntry deleted: {instance.subject.name} with {instance.teacher.name} in {instance.classroom.number} at {instance.time_slot}")
         instance.delete()
 
 
@@ -697,6 +706,84 @@ class DatabaseStatusView(APIView):
             }
         
         return Response(status_data)
+
+
+@api_view(['GET'])
+def validate_data_for_generation(request):
+    """Validate if we have enough data to generate a timetable"""
+    errors = []
+    warnings = []
+    
+    # Check subjects
+    subjects = Subject.objects.all()
+    if not subjects.exists():
+        errors.append('No subjects found. Add at least one subject.')
+    else:
+        warnings.append(f'Found {subjects.count()} subjects')
+    
+    # Check teachers
+    teachers = Teacher.objects.all()
+    if not teachers.exists():
+        errors.append('No teachers found. Add at least one teacher.')
+    else:
+        # Validate teacher-subject assignments
+        for teacher in teachers:
+            if not teacher.subjects.exists():
+                errors.append(f"Teacher '{teacher.name}' has no subjects assigned.")
+        warnings.append(f'Found {teachers.count()} teachers')
+    
+    # Check classrooms
+    classrooms = Classroom.objects.all()
+    if not classrooms.exists():
+        errors.append('No classrooms found. Add at least one classroom.')
+    else:
+        warnings.append(f'Found {classrooms.count()} classrooms')
+    
+    # Check time slots
+    time_slots = TimeSlot.objects.all()
+    if not time_slots.exists():
+        errors.append('No time slots found. Add at least one time slot.')
+    else:
+        class_slots = time_slots.filter(is_break=False)
+        break_slots = time_slots.filter(is_break=True)
+        warnings.append(f'Found {time_slots.count()} time slots ({class_slots.count()} class slots, {break_slots.count()} break slots)')
+    
+    # Check for teacher availability vs time slots
+    if teachers.exists() and time_slots.exists():
+        for teacher in teachers:
+            available_hours = []
+            if teacher.start_time and teacher.end_time:
+                # Check if any timeslot falls within teacher's availability
+                available_count = time_slots.filter(
+                    is_break=False,
+                    start_time__gte=teacher.start_time,
+                    end_time__lte=teacher.end_time
+                ).count()
+                if available_count == 0:
+                    warnings.append(f"Teacher '{teacher.name}' has no available timeslots within their working hours")
+    
+    # Validate subject-classroom compatibility
+    if subjects.exists() and classrooms.exists():
+        for subject in subjects:
+            suitable_rooms = classrooms.filter(
+                models.Q(type='Both') | models.Q(type=subject.type)
+            ).count()
+            if suitable_rooms == 0:
+                warnings.append(f"No suitable classrooms found for {subject.type} subject '{subject.name}'")
+    
+    # Check active timetable requirements
+    active_timetable = Timetable.objects.filter(is_active=True).first()
+    if active_timetable and active_timetable.entries.exists():
+        entries = active_timetable.entries.all()
+        scheduled_hours = entries.filter(is_break=False).count()
+        break_hours = entries.filter(is_break=True).count()
+        warnings.append(f'Currently active timetable has {scheduled_hours} class entries and {break_hours} break entries')
+    
+    return Response({
+        'valid': len(errors) == 0,
+        'errors': errors,
+        'warnings': warnings
+    })
 
 
 def export_data_json(request):

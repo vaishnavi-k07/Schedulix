@@ -66,16 +66,14 @@ class TimetableGenerator:
             )
     
     def add_break_entries(self, timetable, break_slots):
-        """Add break time entries to timetable"""
+        """Add break time entries to timetable - breaks don't need subject, teacher, or classroom"""
         for break_slot in break_slots:
             TimetableEntry.objects.create(
                 timetable=timetable,
                 day=break_slot.day,
                 time_slot=break_slot,
-                subject_id=None,
-                teacher_id=None,
-                classroom_id=None,
                 is_break=True
+                # subject, teacher, and classroom are NULL for breaks
             )
     
     def generate_day_schedule(self, timetable, day, day_timeslots, teachers, subjects, 

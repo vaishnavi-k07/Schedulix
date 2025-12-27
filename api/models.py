@@ -99,9 +99,9 @@ class TimetableEntry(models.Model):
     timetable = models.ForeignKey(Timetable, on_delete=models.CASCADE, related_name='entries')
     day = models.CharField(max_length=10, choices=DAY_CHOICES)
     time_slot = models.ForeignKey(TimeSlot, on_delete=models.CASCADE)
-    subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
-    teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE)
-    classroom = models.ForeignKey(Classroom, on_delete=models.CASCADE)
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE, null=True, blank=True)
+    teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, null=True, blank=True)
+    classroom = models.ForeignKey(Classroom, on_delete=models.CASCADE, null=True, blank=True)
     is_break = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -112,4 +112,10 @@ class TimetableEntry(models.Model):
         ]
 
     def __str__(self):
-        return f"{self.day} {self.time_slot} - {self.subject}"
+        return self.get_entry_display()
+    
+    def get_entry_display(self):
+        """Return display string for timetable entry"""
+        if self.is_break:
+            return f"{self.day} {self.time_slot} - BREAK"
+        return f"{self.day} {self.time_slot} - {self.subject or 'No Subject'} ({self.teacher or 'No Teacher'} in {self.classroom or 'No Classroom'})"
